@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="Generator" content="EditPlus®">
+    <meta name="Author" content="">
+    <meta name="Keywords" content="">
+    <meta name="Description" content="">
+    <title>闪光粒子1</title>
+    <style type="text/css">
+        #canvas {
+            background: #000;
+        }
+    </style>
+
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript">
+        var can = document.getElementById("canvas");
+        var ctx = can.getContext("2d");
+        var w = can.width = window.innerWidth;
+        var h = can.height = window.innerHeight;
+        window.onresize = function () {
+            var w = can.width = window.innerWidth;
+            var h = can.height = window.innerHeight;
+        }
+        //一个类圆  类
+        function Circle() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.vx = Math.random() * 20 - 10; //10到-10之间取值
+            this.vy = Math.random() * 20 - 10;
+            this.r = Math.random() * 20 + 20;
+            var r = Math.random() * 255 >> 0; //>>移位运算
+            var g = Math.random() * 255 >> 0;
+            var b = Math.random() * 255 >> 0;
+            this.color = "rgba(" + r + "," + g + "," + b + ",0.5)"
+        }
+        //一个数组存放圆
+        var counts = [];
+        for (var i = 0; i < 50; i++) {
+            counts.push(new Circle());
+        }
+        //console.log(counts);
+        //var circle = new Circle;
+        //console.log(circle);
+        //具体个圆   对象
+        function draw() {
+            //ctx.clearRect(0,0,w,h);//清除画布.
+            //画布的留影效果
+            ctx.globalCompositeOperation = "source-over";
+            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.fillRect(0, 0, w, h);
+            ctx.globalCompositeOperation = "lighter";
+
+            for (var i = 0, l = counts.length; i < l; i++) {
+                var c = counts[i]; //具体某个圆,数组中的一个
+                var color = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r); //渐变
+                color.addColorStop(0, "#ffffff");
+                color.addColorStop(0.5, "#fff");
+                color.addColorStop(0.5, c.color);
+                color.addColorStop(1, "#000");
+                ctx.beginPath(); //提笔
+                ctx.arc(c.x, c.y, c.r, Math.PI * 2, false); //圆
+                ctx.fillStyle = color; //填充颜色
+                ctx.fill();
+                c.x += c.vx;
+                c.y += c.vy;
+                //移动的方向
+                if (c.x < 0) c.x = w;
+                if (c.x > w) c.x = 0;
+                if (c.y < 0) c.y = h;
+                if (c.y > h) c.y = 0;
+            }
+
+        }
+        //执行
+        setInterval(draw, 30)
+    </script>
+</body>
+
+</html>
